@@ -1,3 +1,5 @@
+require_relative 'hangman_save'
+
 class String
   def indices(char)
     index_arr = []
@@ -16,6 +18,11 @@ class Hangman
     @secret = File.readlines('5desk.txt').sample.chomp
     @result = Array.new(@secret.length, '_')
     @guesses_left = 10
+  end
+
+  def save_game?
+    puts 'Would you like to save the game?'
+    gets.chomp.match(/[yY]/) ? true : false
   end
 
   def user_guess
@@ -39,6 +46,8 @@ class Hangman
 
   def run_game
     while @guesses_left.positive?
+      to_save = save_game?
+      SaveGame.handle_save(self) if to_save
       abort('You Win!') unless @result.include?('_')
       current_guess = user_guess
       indices_of_guess = check_guess(current_guess)
