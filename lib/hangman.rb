@@ -15,14 +15,19 @@ class Hangman
   attr_accessor :win
 
   def initialize
-    @secret = File.readlines('5desk.txt').sample.chomp
+    @secret = File.readlines('../5desk.txt').sample.chomp
     @result = Array.new(@secret.length, '_')
     @guesses_left = 10
+    @game_saver = SaveGame.new
   end
 
   def save_game?
     puts 'Would you like to save the game?'
     gets.chomp.match(/[yY]/) ? true : false
+  end
+
+  def store_object
+    { secret: @secret, guesses_left: @guesses_left, result: @result }
   end
 
   def user_guess
@@ -47,7 +52,7 @@ class Hangman
   def run_game
     while @guesses_left.positive?
       to_save = save_game?
-      SaveGame.handle_save(self) if to_save
+      @game_saver.handle_save(store_object) if to_save
       abort('You Win!') unless @result.include?('_')
       current_guess = user_guess
       indices_of_guess = check_guess(current_guess)
