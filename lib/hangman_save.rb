@@ -2,6 +2,7 @@ require 'yaml'
 
 class SaveGame
   attr_accessor :save_files
+  
   def initialize
     @game_saves = Dir.children('../savegames')
   end
