@@ -26,6 +26,11 @@ class Hangman
     gets.chomp.match(/[yY]/) ? true : false
   end
 
+  def load_game?
+    puts 'Would you like to load a game?'
+    gets.chomp.match(/[yY]/) ? true : false
+  end
+
   def store_object
     { secret: @secret, guesses_left: @guesses_left, result: @result }
   end
@@ -49,9 +54,20 @@ class Hangman
     end
   end
 
+  def load_game
+    puts 'would you like to load a game?'
+    return unless gets.chomp.match(/[yY]/)
+
+    hash = @game_saver.load_game
+    @secret = hash[:secret]
+    @result = hash[:result]
+    @guesses_left = hash[:guesses_left]
+  end
+
   def run_game
+    load_game
     while @guesses_left.positive?
-      to_save = save_game?
+      to_save = save_game? if @guesses_left < 10
       @game_saver.handle_save(store_object) if to_save
       abort('You Win!') unless @result.include?('_')
       current_guess = user_guess
@@ -64,6 +80,6 @@ class Hangman
   end
 # END OF CLASS
 end
-
-hangman = Hangman.new
-hangman.run_game
+#
+# hangman = Hangman.new
+# hangman.run_game
